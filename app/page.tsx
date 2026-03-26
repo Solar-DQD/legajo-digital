@@ -1,65 +1,145 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import FormStepper from './components/FormStepper';
+import Step1 from './components/steps/Step1';
+import Step2 from './components/steps/Step2';
+import Step3 from './components/steps/Step3';
+import Step4 from './components/steps/Step4';
+import Step5 from './components/steps/Step5';
+import Step6 from './components/steps/Step6';
+import { FormProvider, useForm } from 'react-hook-form';
+
+export type Experiencia = {
+  empresa: string,
+  puesto: string,
+  sector: string,
+  desde: string,
+  hasta: string,
+  descripcion: string
+};
+
+export type Educacion = {
+  nivel: number | '',
+  titulo: string,
+  institucion: string,
+  desde: string,
+  hasta: string
+};
+
+export type LegajoFormData = {
+  //step1
+  nombre: string,
+  dni: string,
+  telefono: string,
+  email: string,
+  pais: number | '',
+  provincia: number | '',
+  convenio: number | '',
+  area: number | '',
+  puesto: string,
+  //step2
+  habilidades: number[],
+  habilidadesPersonalizadas: string[],
+  //step3
+  herramientas: number[],
+  herramientasPersonalizadas: string[],
+  //step4
+  experiencias: Experiencia[],
+  //step5
+  educaciones: Educacion[],
+  certificaciones: string[],
+  licencias: number[],
+  //step6
+  disponibilidad: number | '',
+  idiomas: number[],
+  observaciones: string,
+  cv: File | null
+}
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+  //state
+  const [activeStep, setActiveStep] = useState(0);
+  const [submittedName, setSubmittedName] = useState<string | null>(null);
+  const next = () => setActiveStep((s) => s + 1);
+  const back = () => setActiveStep((s) => s - 1);
+  //hooks
+  const form = useForm<LegajoFormData>({
+    defaultValues: {
+      //step1
+      nombre: '',
+      dni: '',
+      telefono: '',
+      email: '',
+      pais: '',
+      provincia: '',
+      convenio: '',
+      area: '',
+      puesto: '',
+      //step2
+      habilidades: [],
+      habilidadesPersonalizadas: [],
+      //step3
+      herramientas: [],
+      herramientasPersonalizadas: [],
+      //step4
+      experiencias: [],
+      //step5
+      educaciones: [],
+      certificaciones: [],
+      licencias: [],
+      //step6
+      disponibilidad: '',
+      idiomas: [],
+      observaciones: '',
+      cv: null
+    }
+  });
+  if (submittedName !== null) {
+    return (
+      <div className='flex flex-col flex-1 items-center justify-center gap-6 px-4 text-center'>
+        <div className='flex items-center justify-center w-20 h-20 rounded-full bg-green-100'>
+          <svg className='w-10 h-10 text-green-600' fill='none' viewBox='0 0 24 24' stroke='currentColor' strokeWidth={2.5}>
+            <path strokeLinecap='round' strokeLinejoin='round' d='M5 13l4 4L19 7' />
+          </svg>
+        </div>
+        <div className='flex flex-col gap-2'>
+          <p className='text-xl font-bold text-gray-800'>¡Legajo enviado!</p>
+          <p className='text-sm text-gray-500'>
+            Gracias <span className='font-medium text-gray-700'>{submittedName}</span>, tu legajo fue recibido correctamente.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className='flex w-full h-1'>
+        <div
+          className='bg-orange-300'
+          style={{ width: `${Math.round((100 / 6) * (activeStep + 1))}%` }}
+        />
+        <div
+          className='bg-gray-300'
+          style={{ width: `${100 - Math.round((100 / 6) * (activeStep + 1))}%` }}
+        />
+      </div>
+      <div className='flex flex-col flex-1 items-center overflow-auto'>
+        <div className='py-4 px-4 max-w-[600px]'>
+          <FormStepper activeStep={activeStep} />
         </div>
-      </main>
-    </div>
+        <div className='flex flex-col flex-1 w-full max-w-[600px] items-center px-4 pb-10'>
+          <FormProvider {...form}>
+            {activeStep === 0 && <Step1 onNext={next} />}
+            {activeStep === 1 && <Step2 onNext={next} onBack={back} />}
+            {activeStep === 2 && <Step3 onNext={next} onBack={back} />}
+            {activeStep === 3 && <Step4 onNext={next} onBack={back} />}
+            {activeStep === 4 && <Step5 onNext={next} onBack={back} />}
+            {activeStep === 5 && <Step6 onBack={back} onSuccess={(nombre) => setSubmittedName(nombre)} />}
+          </FormProvider>
+        </div>
+      </div>
+    </>
   );
 }

@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+}
+
+model Pais {
+  id         Int         @id @default(autoincrement())
+  nombre     String
+  provincias Provincia[]
+  empleados  Empleado[]
+}
+
+model Provincia {
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  idPais    Int
+  pais      Pais       @relation(fields: [idPais], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  empleados Empleado[]
+}
+
+model Area {
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  empleados Empleado[]
+}
+
+model Idioma {
+  id              Int              @id @default(autoincrement())
+  nombre          String
+  empleadoIdiomas EmpleadoIdioma[]
+}
+
+model NivelEducativo {
+  id                Int                 @id @default(autoincrement())
+  nombre            String
+  empleadoEducacion EmpleadoEducacion[]
+}
+
+model TipoConvenio {
+  id          Int         @id @default(autoincrement())
+  nombre      String
+  habilidades Habilidad[]
+  empleados   Empleado[]
+}
+
+model Habilidad {
+  id                  Int                 @id @default(autoincrement())
+  nombre              String
+  idTipoConvenio      Int
+  tipoConvenio        TipoConvenio        @relation(fields: [idTipoConvenio], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  empleadoHabilidades EmpleadoHabilidad[]
+}
+
+model Herramienta {
+  id                   Int                   @id @default(autoincrement())
+  nombre               String
+  empleadoHerramientas EmpleadoHerramienta[]
+}
+
+model Licencia {
+  id                Int                @id @default(autoincrement())
+  codigo            String
+  nombre            String
+  empleadoLicencias EmpleadoLicencia[]
+}
+
+model Empleado {
+  id                      Int                     @id @default(autoincrement())
+  nombre                  String
+  dni                     String                  @unique
+  telefono                String
+  email                   String                  @unique
+  urlCv                   String
+  idProvincia             Int
+  idPais                  Int
+  idTipoConvenio          Int
+  idDisponibilidadViaje   Int
+  idArea                  Int?
+  puesto                  String?
+  createdAt               DateTime                @default(now())
+  provincia               Provincia               @relation(fields: [idProvincia], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  pais                    Pais                    @relation(fields: [idPais], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  tipoConvenio            TipoConvenio            @relation(fields: [idTipoConvenio], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  area                    Area?                   @relation(fields: [idArea], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  disponibilidad          DisponibilidadViaje     @relation(fields: [idDisponibilidadViaje], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  experiencias            EmpleadoExperiencia[]
+  educacion               EmpleadoEducacion[]
+  certificaciones         EmpleadoCertificacion[]
+  idiomas                 EmpleadoIdioma[]
+  habilidades             EmpleadoHabilidad[]
+  herramientas            EmpleadoHerramienta[]
+  licencias               EmpleadoLicencia[]
+}
+
+model EmpleadoExperiencia {
+  id          Int       @id @default(autoincrement())
+  empresa     String
+  puesto      String
+  rubro       String
+  desde       DateTime
+  hasta       DateTime?
+  descripcion String
+  idEmpleado  Int
+  empleado    Empleado  @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
+}
+
+model EmpleadoEducacion {
+  id               Int            @id @default(autoincrement())
+  titulo           String
+  institucion      String
+  inicio           Int
+  final            Int?
+  idNivelEducativo Int
+  idEmpleado       Int
+  nivelEducativo   NivelEducativo @relation(fields: [idNivelEducativo], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  empleado         Empleado       @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
+}
+
+model EmpleadoCertificacion {
+  id         Int      @id @default(autoincrement())
+  nombre     String
+  idEmpleado Int
+  empleado   Empleado @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
+}
+
+model EmpleadoIdioma {
+  id         Int      @id @default(autoincrement())
+  idEmpleado Int
+  idIdioma   Int
+  empleado   Empleado @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  idioma     Idioma   @relation(fields: [idIdioma], references: [id], onUpdate: NoAction, onDelete: NoAction)
+}
+
+model EmpleadoHabilidad {
+  id          Int       @id @default(autoincrement())
+  idEmpleado  Int
+  idHabilidad Int
+  empleado    Empleado  @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  habilidad   Habilidad @relation(fields: [idHabilidad], references: [id], onUpdate: NoAction, onDelete: NoAction)
+}
+
+model EmpleadoHerramienta {
+  id            Int         @id @default(autoincrement())
+  idEmpleado    Int
+  idHerramienta Int
+  empleado      Empleado    @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  herramienta   Herramienta @relation(fields: [idHerramienta], references: [id], onUpdate: NoAction, onDelete: NoAction)
+}
+
+model EmpleadoLicencia {
+  id         Int      @id @default(autoincrement())
+  idEmpleado Int
+  idLicencia Int
+  empleado   Empleado @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  licencia   Licencia @relation(fields: [idLicencia], references: [id], onUpdate: NoAction, onDelete: NoAction)
+}
+
+model DisponibilidadViaje {
+  id          Int        @id @default(autoincrement())
+  nombre      String
+  empleados   Empleado[]
+}
