@@ -1,5 +1,6 @@
 'use server'
 import { prisma } from '@/lib/prisma'
+import type { Prisma } from '@prisma/client'
 
 const MAX_CV_SIZE = 5 * 1024 * 1024
 
@@ -105,7 +106,7 @@ export async function submitLegajo(formData: FormData): Promise<{ error?: string
     const urlCv = await uploadCvToSharePoint(cv, token)
 
     // Todo lo de DB dentro de una transacción
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Crear habilidades y herramientas personalizadas
       const customHabilidades = await Promise.all(
         data.habilidadesPersonalizadas.map(nombre =>
