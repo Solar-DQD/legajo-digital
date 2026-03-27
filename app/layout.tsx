@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SnackbarProvider } from "@/lib/context/snackbar";
@@ -5,6 +6,11 @@ import queryClient from "@/lib/providers/queryProvider";
 import { QueryClientProvider } from "@tanstack/react-query";
 
 const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: "Legajo Digital",
+  description: "Design, Quality and Development.",
+};
 
 export default function RootLayout({
   children,
