@@ -1,62 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import FormStepper from './components/FormStepper';
-import Step1 from './components/steps/Step1';
-import Step2 from './components/steps/Step2';
-import Step3 from './components/steps/Step3';
-import Step4 from './components/steps/Step4';
-import Step5 from './components/steps/Step5';
-import Step6 from './components/steps/Step6';
-import LandingPage from './components/LandingPage';
+import FormStepper from '@/components/common/FormStepper';
+import Step1 from '@/components/steps/Step1';
+import Step2 from '@/components/steps/Step2';
+import Step3 from '@/components/steps/Step3';
+import Step4 from '@/components/steps/Step4';
+import Step5 from '@/components/steps/Step5';
+import Step6 from '@/components/steps/Step6';
+import LandingPage from '@/components/landing';
 import { FormProvider, useForm } from 'react-hook-form';
-
-export type Experiencia = {
-  empresa: string,
-  puesto: string,
-  sector: string,
-  desde: string,
-  hasta: string,
-  descripcion: string
-};
-
-export type Educacion = {
-  nivel: number | '',
-  titulo: string,
-  institucion: string,
-  desde: string,
-  hasta: string
-};
-
-export type LegajoFormData = {
-  //step1
-  nombre: string,
-  dni: string,
-  telefono: string,
-  email: string,
-  pais: number | '',
-  provincia: number | '',
-  convenio: number | '',
-  area: number | '',
-  puesto: string,
-  //step2
-  habilidades: number[],
-  habilidadesPersonalizadas: string[],
-  //step3
-  herramientas: number[],
-  herramientasPersonalizadas: string[],
-  //step4
-  experiencias: Experiencia[],
-  //step5
-  educaciones: Educacion[],
-  certificaciones: string[],
-  licencias: number[],
-  //step6
-  disponibilidad: number | '',
-  idiomas: number[],
-  observaciones: string,
-  cv: File | null
-}
+import { LegajoFormData } from '@/lib/types/legajo';
 
 export default function Home() {
   //state

@@ -1,15 +1,15 @@
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
-import StepWrapper from "../StepWrapper";
-import { LegajoFormData } from "@/app/page";
-import FormField from "../FormField";
-import FormDatePicker from "../FormDatePicker";
+import StepWrapper from "@/components/common/StepWrapper";
+import { LegajoFormData } from "@/lib/types/legajo";
+import FormField from "@/components/common/FormField";
+import FormDatePicker from "@/components/common/FormDatePicker";
 import { Button, Checkbox, Chip, InputAdornment, Skeleton, TextField } from "@mui/material";
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { useQuery } from "@tanstack/react-query";
 import { getNiveles } from "@/actions/nivelEducativo/nivelEducativo.actions";
 import { useSnackbar } from "@/lib/context/snackbar";
 import { useEffect, useState } from "react";
-import FormSelect from "../FormSelect";
+import FormSelect from "@/components/common/FormSelect";
 import { getLicencias } from "@/actions/licencia/licencia.actions";
 import MopedRoundedIcon from '@mui/icons-material/MopedRounded';
 import DirectionsCarFilledRoundedIcon from '@mui/icons-material/DirectionsCarFilledRounded';
@@ -178,4 +178,4 @@ export default function Step5({
       </div>
     </StepWrapper>
   );
-};
+}

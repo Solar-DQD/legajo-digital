@@ -1,10 +1,10 @@
 import { useFormContext, useWatch } from "react-hook-form";
-import { LegajoFormData } from "@/app/page";
+import { LegajoFormData } from "@/lib/types/legajo";
 import { useQuery } from "@tanstack/react-query";
 import { getHabilidadesByConvenio } from "@/actions/habilidad/habilidad.actions";
 import { useSnackbar } from "@/lib/context/snackbar";
 import { useEffect, useState } from "react";
-import StepWrapper from "../StepWrapper";
+import StepWrapper from "@/components/common/StepWrapper";
 import { Chip, InputAdornment, Skeleton, TextField } from "@mui/material";
 
 export default function Step2({
@@ -101,4 +101,4 @@ export default function Step2({
       </div>
     </StepWrapper>
   );
-};
+}

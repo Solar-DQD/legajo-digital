@@ -4,11 +4,7 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 
-interface FormStepperProps {
-  activeStep: number;
-};
-
-export default function FormStepper({ activeStep }: FormStepperProps) {
+export default function FormStepper({ activeStep }: { activeStep: number }) {
   return (
     <Stepper
       activeStep={activeStep}
@@ -29,4 +25,4 @@ export default function FormStepper({ activeStep }: FormStepperProps) {
       ))}
     </Stepper>
   );
-};
+}

@@ -1,5 +1,5 @@
 import { useFormContext } from "react-hook-form";
-import { LegajoFormData } from "@/app/page";
+import { LegajoFormData } from "@/lib/types/legajo";
 import { useQuery } from "@tanstack/react-query";
 import { getPaises } from "@/actions/pais/pais.actions";
 import { useSnackbar } from "@/lib/context/snackbar";
@@ -7,9 +7,9 @@ import { useEffect } from "react";
 import { getProvinciasByPais } from "@/actions/provincia/provincia.actions";
 import { getTiposConvenio } from "@/actions/tipoconvenio/tipoconvenio.actions";
 import { getAreas } from "@/actions/area/area.actions";
-import StepWrapper from "../StepWrapper";
-import FormField from "../FormField";
-import FormSelect from "../FormSelect";
+import StepWrapper from "@/components/common/StepWrapper";
+import FormField from "@/components/common/FormField";
+import FormSelect from "@/components/common/FormSelect";
 
 export default function Step1({
   onNext,
@@ -79,4 +79,4 @@ export default function Step1({
       </>}
     </StepWrapper>
   );
-};
+}

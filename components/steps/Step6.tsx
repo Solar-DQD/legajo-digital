@@ -1,8 +1,9 @@
 import { useSnackbar } from "@/lib/context/snackbar";
-import StepWrapper from "../StepWrapper";
+import StepWrapper from "@/components/common/StepWrapper";
 import { submitLegajo } from "@/actions/legajo/legajo.actions";
 import { useFormContext, useWatch } from "react-hook-form";
-import { LegajoFormData } from "@/app/page";
+import { LegajoFormData } from "@/lib/types/legajo";
+import { MAX_CV_SIZE } from "@/lib/constants";
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getDisponibilidades } from "@/actions/disponibilidad/disponibilidad.actions";
@@ -13,13 +14,11 @@ import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
-import FormField from "../FormField";
+import FormField from "@/components/common/FormField";
 
 const disponibilidadEmoji: Record<string, React.ReactNode> = {
   'Si, Sin Restricciones': <CheckRoundedIcon />, 'Si, Con Previo Aviso': <CalendarMonthRoundedIcon />, 'Solo Mi Provincia': <HomeRoundedIcon />, 'No Disponible Por Ahora': <CloseRoundedIcon />,
 };
-
-const MAX_CV_SIZE = 5 * 1024 * 1024;
 
 export default function Step6({
   onBack,
@@ -188,4 +187,4 @@ export default function Step6({
       </div>
     </StepWrapper>
   );
-};
+}

@@ -1,10 +1,10 @@
 import { useFieldArray, useFormContext } from "react-hook-form";
-import StepWrapper from "../StepWrapper";
-import { LegajoFormData } from "@/app/page";
+import StepWrapper from "@/components/common/StepWrapper";
+import { LegajoFormData } from "@/lib/types/legajo";
 import { Button } from "@mui/material";
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import FormField from "../FormField";
-import FormDatePicker from "../FormDatePicker";
+import FormField from "@/components/common/FormField";
+import FormDatePicker from "@/components/common/FormDatePicker";
 
 export default function Step4({
   onNext,
@@ -73,4 +73,4 @@ export default function Step4({
       </Button>
     </StepWrapper>
   );
-};
+}

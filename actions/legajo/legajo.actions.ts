@@ -1,108 +1,12 @@
 'use server'
+
 import { prisma } from '@/lib/prisma'
 import type { Prisma } from '@prisma/client'
-
-const MAX_CV_SIZE = 5 * 1024 * 1024
-
-async function getGraphToken(): Promise<string> {
-  const res = await fetch(
-    `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/token`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        grant_type: 'client_credentials',
-        client_id: process.env.CLIENT_ID!,
-        client_secret: process.env.CLIENT_SECRET!,
-        scope: 'https://graph.microsoft.com/.default',
-      }),
-    }
-  )
-  const json = await res.json()
-  if (!json.access_token) throw new Error('No se pudo obtener el token de SharePoint')
-  return json.access_token
-}
-
-async function uploadCvToSharePoint(file: File, token: string): Promise<string> {
-  const siteName = process.env.SP_SITE_NAME!
-  const libraryName = process.env.SP_LIBRARY_NAME!
-  const uploadPath = process.env.SP_UPLOAD_PATH!
-
-  const sitesRes = await fetch(`https://graph.microsoft.com/v1.0/sites?search=${siteName}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-  const sitesJson = await sitesRes.json()
-  if (!sitesJson.value?.length) throw new Error(`Sitio "${siteName}" no encontrado en SharePoint`)
-  const siteId: string = sitesJson.value[0].id
-
-  const drivesRes = await fetch(`https://graph.microsoft.com/v1.0/sites/${siteId}/drives`, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-  const drivesJson = await drivesRes.json()
-  const drive = drivesJson.value?.find((d: { name: string }) => d.name === libraryName)
-  if (!drive) throw new Error(`Biblioteca "${libraryName}" no encontrada en "${siteName}"`)
-
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-  const filename = `${Date.now()}_${safeName}`
-  const buffer = await file.arrayBuffer()
-
-  const uploadRes = await fetch(
-    `https://graph.microsoft.com/v1.0/drives/${drive.id}/root:/${uploadPath}/${filename}:/content`,
-    {
-      method: 'PUT',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/pdf' },
-      body: buffer,
-    }
-  )
-  if (!uploadRes.ok) throw new Error('Error al subir el CV a SharePoint')
-  const uploadJson = await uploadRes.json()
-  return uploadJson.webUrl as string
-}
-
-function parseMonthYear(value: string): { month: number; year: number } | null {
-  if (!value) return null
-  const parts = value.split('-')
-  if (parts.length !== 2) return null
-  const month = parseInt(parts[0])
-  const year = parseInt(parts[1])
-  if (isNaN(month) || isNaN(year)) return null
-  return { month, year }
-}
-
-type FormPayload = {
-  nombre: string
-  dni: string
-  telefono: string
-  email: string
-  pais: number
-  provincia: number
-  convenio: number
-  area: number | ''
-  puesto: string
-  habilidades: number[]
-  habilidadesPersonalizadas: string[]
-  herramientas: number[]
-  herramientasPersonalizadas: string[]
-  experiencias: { empresa: string; puesto: string; sector: string; desde: string; hasta: string; descripcion: string }[]
-  educaciones: { nivel: number; titulo: string; institucion: string; desde: string; hasta: string }[]
-  certificaciones: string[]
-  licencias: number[]
-  disponibilidad: number
-  idiomas: number[]
-}
-
-async function verifyTurnstile(token: string): Promise<boolean> {
-  const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      secret: process.env.TURNSTILE_SECRET_KEY!,
-      response: token,
-    }),
-  })
-  const json = await res.json()
-  return json.success === true
-}
+import type { FormPayload } from '@/lib/types/legajo'
+import { MAX_CV_SIZE } from '@/lib/constants'
+import { parseMonthYear } from '@/lib/utils/parseMonthYear'
+import { verifyTurnstile } from '@/actions/turnstile/turnstile.actions'
+import { getGraphToken, uploadCvToSharePoint } from '@/actions/graphApi/graphApi.actions'
 
 export async function submitLegajo(formData: FormData): Promise<{ error?: string }> {
   try {
