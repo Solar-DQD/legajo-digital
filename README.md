@@ -1,14 +1,14 @@
 # Legajo Digital
 
-Formulario web para la carga de legajos de empleados. Recopila datos personales, habilidades, herramientas, experiencia laboral, formacion, disponibilidad y CV en PDF, guardando todo en SQL Server y subiendo el CV a SharePoint.
+Formulario web para la carga de legajos de empleados. Recopila datos personales, habilidades, herramientas, experiencia laboral, formación, disponibilidad y CV en PDF, guardando todo en SQL Server y subiendo el CV a SharePoint.
 
 ## Stack
 
-- **Next.js 16** (App Router)
-- **React 19** + React Hook Form
-- **MUI 7** (Material UI) + Tailwind CSS 4
-- **Prisma 7** con SQL Server (adapter MSSQL)
-- **TanStack Query** para fetch de datos
+- **Next.js 16.2.1** (App Router)
+- **React 19.2.4** + React Hook Form
+- **MUI 7.3.9** (Material UI) + Tailwind CSS 4
+- **Prisma 7.5.0** con SQL Server (adapter `@prisma/adapter-mssql`)
+- **TanStack Query 5** para fetch de datos
 - **Microsoft Graph API** para subida de CVs a SharePoint
 
 ## Requisitos
@@ -23,9 +23,9 @@ Formulario web para la carga de legajos de empleados. Recopila datos personales,
 # Instalar dependencias
 npm install
 
-# Copiar variables de entorno
-cp .env.example .env
-# Completar .env con los valores reales
+# Crear el archivo de variables de entorno
+# No hay .env.example en el repositorio, crear .env manualmente
+# y completar con los valores reales.
 
 # Generar Prisma Client
 npm run db:generate
@@ -33,7 +33,7 @@ npm run db:generate
 # Aplicar migraciones
 npm run db:migrate
 
-# Cargar datos iniciales (paises, provincias, etc.)
+# Cargar datos iniciales (países, provincias, etc.)
 npm run db:seed
 
 # Iniciar en desarrollo
@@ -42,26 +42,26 @@ npm run dev
 
 ## Variables de entorno
 
-| Variable | Descripcion |
+| Variable | Descripción |
 |---|---|
 | `DATABASE_URL` | Connection string de SQL Server |
 | `TENANT_ID` | Azure AD tenant ID |
 | `CLIENT_ID` | Azure AD app client ID |
 | `CLIENT_SECRET` | Azure AD app client secret |
-| `SP_SITE_NAME` | Nombre del sitio SharePoint (busqueda) |
+| `SP_SITE_NAME` | Nombre del sitio SharePoint (búsqueda) |
 | `SP_LIBRARY_NAME` | Nombre de la biblioteca de documentos |
 | `SP_UPLOAD_PATH` | Carpeta destino dentro de la biblioteca |
 
 ## Scripts
 
-| Script | Descripcion |
+| Script | Descripción |
 |---|---|
 | `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Build de produccion |
-| `npm run start` | Servidor de produccion |
+| `npm run build` | Build de producción |
+| `npm run start` | Servidor de producción |
 | `npm run lint` | ESLint |
 | `npm run db:migrate` | Crear/aplicar migraciones |
-| `npm run db:push` | Push schema sin migracion |
+| `npm run db:push` | Push schema sin migración |
 | `npm run db:seed` | Seed de datos iniciales |
 | `npm run db:generate` | Generar Prisma Client |
 
@@ -73,17 +73,23 @@ app/
   layout.tsx            # Layout con header y providers
   error.tsx             # Error boundary
   components/
-    StepWrapper.tsx      # Wrapper comun de cada paso
-    FormField.tsx        # Input de texto reutilizable
-    FormSelect.tsx       # Select reutilizable
-    FormDatePicker.tsx   # DatePicker reutilizable
-    FormStepper.tsx      # Indicador de progreso
-    steps/               # Step1 a Step6
+    common/
+      FormDatePicker.tsx  # DatePicker reutilizable
+      FormField.tsx       # Input de texto reutilizable
+      FormSelect.tsx      # Select reutilizable
+      FormStepper.tsx     # Indicador de progreso
+      StepWrapper.tsx     # Wrapper común de cada paso
+    landing/
+      index.tsx
+    steps/                # Step1 a Step6
 actions/                 # Server actions (Prisma queries + submit)
 lib/
   prisma.ts             # Singleton de PrismaClient
+  constants/
   context/snackbar.tsx  # Context de notificaciones
   providers/            # QueryClient
+  types/                # Tipos del proyecto
+  utils/                # Utilidades varias
 prisma/
   schema.prisma         # Modelo de datos
   seed/                 # Seed de datos iniciales
