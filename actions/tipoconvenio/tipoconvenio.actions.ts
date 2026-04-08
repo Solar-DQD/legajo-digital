@@ -12,5 +12,5 @@ export async function getTiposConvenio() {
 };
 
 export async function getTipoConvenioFueraConvenio() {
-    return await prisma.tipoConvenio.findFirst({ where: { nombre: 'Fuera de Convenio' } });
+    return await prisma.tipoConvenio.findFirst({ where: { nombre: 'Oficina' } });
 };

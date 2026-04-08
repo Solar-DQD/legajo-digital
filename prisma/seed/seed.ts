@@ -504,13 +504,13 @@ async function main() {
     await prisma.tipoConvenio.deleteMany()
     await prisma.tipoConvenio.createMany({
         data: [
-            { nombre: 'Fuera de Convenio' },
+            { nombre: 'Oficina' },
             { nombre: 'Operario' },
         ],
     })
 
     const convenios = await prisma.tipoConvenio.findMany()
-    const idFueraConvenio = convenios.find((c: { id: number, nombre: string }) => c.nombre === 'Fuera de Convenio')!.id
+    const idFueraConvenio = convenios.find((c: { id: number, nombre: string }) => c.nombre === 'Oficina')!.id
     const idOperario = convenios.find((c: { id: number, nombre: string }) => c.nombre === 'Operario')!.id
 
     // ─── LICENCIA ────────────────────────────────────────────────────────────────
