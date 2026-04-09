@@ -47,7 +47,9 @@ export async function uploadFilesToSharePoint(files: File[], token: string, isPo
   const drive = drivesJson.value?.find((d: { name: string }) => d.name === libraryName)
   if (!drive) throw new Error(`Biblioteca "${libraryName}" no encontrada en "${siteName}"`)
 
-  const baseName = `${Date.now()}_${dni}`
+  const now = new Date()
+  const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`
+  const baseName = `${dni}-${dateStr}`
   const basePath = `${uploadPath}/${pais!.nombre}/${provincia!.nombre}`
 
   if (files.length === 1) {
