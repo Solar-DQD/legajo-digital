@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
 import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
+import SyncIcon from '@mui/icons-material/Sync';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { useEffect, useState } from "react";
 
@@ -77,10 +78,12 @@ export default function StepWrapper({
                         fullWidth
                         disableElevation
                         disabled={isSubmitting || (mounted ? !isValid : false)}
-                        startIcon={<CheckRoundedIcon />}
+                        startIcon={isSubmitting ? (
+                            <SyncIcon className='animate-spin' style={{ animationDirection: 'reverse' }} />
+                        ) : <CheckRoundedIcon />}
                         onClick={onSubmit}
                     >
-                        {isSubmitting ? 'Enviando...' : 'Enviar legajo'}
+                        {isSubmitting ? 'Enviando' : 'Enviar legajo'}
                     </Button>
                 }
             </div>
