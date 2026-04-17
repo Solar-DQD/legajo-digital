@@ -7,6 +7,11 @@ import { MAX_CV_SIZE } from '@/lib/constants'
 import { parseMonthYear } from '@/lib/utils/parseMonthYear'
 import { verifyTurnstile } from '@/actions/turnstile/turnstile.actions'
 import { getGraphToken, uploadFilesToSharePoint } from '@/actions/graphApi/graphApi.actions'
+import { getEstadosEmpleado } from '../estadoEmpleado/estadoEmpleado.actions'
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+
+dayjs.extend(customParseFormat)
 
 export async function submitLegajo(formData: FormData, isPostulante: boolean): Promise<{ error?: string }> {
   try {
@@ -27,8 +32,10 @@ export async function submitLegajo(formData: FormData, isPostulante: boolean): P
     }
 
     // Subir archivos a SharePoint (fuera de la transacción de DB)
-    const token = await getGraphToken()
-    const urlCv = await uploadFilesToSharePoint(archivos, token, isPostulante, data.pais, data.provincia, data.dni)
+    const token = await getGraphToken();
+    const urlCv = await uploadFilesToSharePoint(archivos, token, isPostulante, data.pais, data.provincia, data.dni);
+
+    const estados = await getEstadosEmpleado();
 
     // Todo lo de DB dentro de una transacción
     await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
@@ -52,12 +59,14 @@ export async function submitLegajo(formData: FormData, isPostulante: boolean): P
           telefono: data.telefono,
           email: data.email,
           urlCv,
+          fechaNacimiento: dayjs(data.fechaNacimiento, 'DD-MM-YYYY').toDate(),
           idProvincia: data.provincia,
           idPais: data.pais,
           idTipoConvenio: data.convenio,
           idDisponibilidadViaje: data.disponibilidad,
           idArea: data.area === '' ? null : data.area,
           puesto: data.puesto || null,
+          idEstadoEmpleado: isPostulante ? estados['Postulante'] : estados['Empleado Activo'],
         },
       })
 
@@ -121,3 +130,4 @@ export async function submitLegajo(formData: FormData, isPostulante: boolean): P
     return { error: error instanceof Error ? error.message : 'Error al guardar el legajo' }
   }
 }
+

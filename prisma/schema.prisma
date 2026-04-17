@@ -9,16 +9,16 @@ datasource db {
 model Pais {
   id         Int         @id @default(autoincrement())
   nombre     String
-  provincias Provincia[]
   empleados  Empleado[]
+  provincias Provincia[]
 }
 
 model Provincia {
   id        Int        @id @default(autoincrement())
   nombre    String
   idPais    Int
-  pais      Pais       @relation(fields: [idPais], references: [id], onUpdate: NoAction, onDelete: NoAction)
   empleados Empleado[]
+  pais      Pais       @relation(fields: [idPais], references: [id], onUpdate: NoAction)
 }
 
 model Area {
@@ -42,16 +42,16 @@ model NivelEducativo {
 model TipoConvenio {
   id          Int         @id @default(autoincrement())
   nombre      String
-  habilidades Habilidad[]
   empleados   Empleado[]
+  habilidades Habilidad[]
 }
 
 model Habilidad {
   id                  Int                 @id @default(autoincrement())
   nombre              String
   idTipoConvenio      Int
-  tipoConvenio        TipoConvenio        @relation(fields: [idTipoConvenio], references: [id], onUpdate: NoAction, onDelete: NoAction)
   empleadoHabilidades EmpleadoHabilidad[]
+  tipoConvenio        TipoConvenio        @relation(fields: [idTipoConvenio], references: [id], onUpdate: NoAction)
 }
 
 model Herramienta {
@@ -68,31 +68,36 @@ model Licencia {
 }
 
 model Empleado {
-  id                      Int                     @id @default(autoincrement())
-  nombre                  String
-  dni                     String                  @unique
-  telefono                String
-  email                   String                  @unique
-  urlCv                   String
-  idProvincia             Int
-  idPais                  Int
-  idTipoConvenio          Int
-  idDisponibilidadViaje   Int
-  idArea                  Int?
-  puesto                  String?
-  createdAt               DateTime                @default(now())
-  provincia               Provincia               @relation(fields: [idProvincia], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  pais                    Pais                    @relation(fields: [idPais], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  tipoConvenio            TipoConvenio            @relation(fields: [idTipoConvenio], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  area                    Area?                   @relation(fields: [idArea], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  disponibilidad          DisponibilidadViaje     @relation(fields: [idDisponibilidadViaje], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  experiencias            EmpleadoExperiencia[]
-  educacion               EmpleadoEducacion[]
-  certificaciones         EmpleadoCertificacion[]
-  idiomas                 EmpleadoIdioma[]
-  habilidades             EmpleadoHabilidad[]
-  herramientas            EmpleadoHerramienta[]
-  licencias               EmpleadoLicencia[]
+  id                    Int                     @id @default(autoincrement())
+  nombre                String
+  dni                   String
+  telefono              String
+  email                 String
+  urlCv                 String
+  idProvincia           Int
+  idPais                Int
+  idTipoConvenio        Int?
+  idArea                Int?
+  puesto                String?
+  idDisponibilidadViaje Int
+  createdAt             DateTime                @default(now())
+  fechaNacimiento       DateTime?               @db.Date
+  idEstadoEmpleado      Int?                    @relation(fields: [idEstadoEmpleado], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  area                  Area?                   @relation(fields: [idArea], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  disponibilidad        DisponibilidadViaje     @relation(fields: [idDisponibilidadViaje], references: [id], onUpdate: NoAction)
+  pais                  Pais                    @relation(fields: [idPais], references: [id], onUpdate: NoAction)
+  provincia             Provincia               @relation(fields: [idProvincia], references: [id], onUpdate: NoAction)
+  tipoConvenio          TipoConvenio?           @relation(fields: [idTipoConvenio], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  EstadoEmpleado        EstadoEmpleado?         @relation(fields: [idEstadoEmpleado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Empleado_EstadoEmpleado")
+  certificaciones       EmpleadoCertificacion[]
+  educacion             EmpleadoEducacion[]
+  experiencias          EmpleadoExperiencia[]
+  habilidades           EmpleadoHabilidad[]
+  herramientas          EmpleadoHerramienta[]
+  idiomas               EmpleadoIdioma[]
+  licencias             EmpleadoLicencia[]
+
+  @@index([idEstadoEmpleado], map: "IX_Empleado_idEstadoEmpleado")
 }
 
 model EmpleadoExperiencia {
@@ -104,7 +109,7 @@ model EmpleadoExperiencia {
   hasta       DateTime?
   descripcion String
   idEmpleado  Int
-  empleado    Empleado  @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  empleado    Empleado  @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction)
 }
 
 model EmpleadoEducacion {
@@ -115,51 +120,67 @@ model EmpleadoEducacion {
   final            Int?
   idNivelEducativo Int
   idEmpleado       Int
-  nivelEducativo   NivelEducativo @relation(fields: [idNivelEducativo], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  empleado         Empleado       @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  empleado         Empleado       @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction)
+  nivelEducativo   NivelEducativo @relation(fields: [idNivelEducativo], references: [id], onUpdate: NoAction)
 }
 
 model EmpleadoCertificacion {
   id         Int      @id @default(autoincrement())
   nombre     String
   idEmpleado Int
-  empleado   Empleado @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  empleado   Empleado @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction)
 }
 
 model EmpleadoIdioma {
   id         Int      @id @default(autoincrement())
   idEmpleado Int
   idIdioma   Int
-  empleado   Empleado @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
-  idioma     Idioma   @relation(fields: [idIdioma], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  empleado   Empleado @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction)
+  idioma     Idioma   @relation(fields: [idIdioma], references: [id], onUpdate: NoAction)
 }
 
 model EmpleadoHabilidad {
   id          Int       @id @default(autoincrement())
   idEmpleado  Int
   idHabilidad Int
-  empleado    Empleado  @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
-  habilidad   Habilidad @relation(fields: [idHabilidad], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  empleado    Empleado  @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction)
+  habilidad   Habilidad @relation(fields: [idHabilidad], references: [id], onUpdate: NoAction)
 }
 
 model EmpleadoHerramienta {
   id            Int         @id @default(autoincrement())
   idEmpleado    Int
   idHerramienta Int
-  empleado      Empleado    @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
-  herramienta   Herramienta @relation(fields: [idHerramienta], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  empleado      Empleado    @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction)
+  herramienta   Herramienta @relation(fields: [idHerramienta], references: [id], onUpdate: NoAction)
 }
 
 model EmpleadoLicencia {
   id         Int      @id @default(autoincrement())
   idEmpleado Int
   idLicencia Int
-  empleado   Empleado @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction, onDelete: Cascade)
-  licencia   Licencia @relation(fields: [idLicencia], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  empleado   Empleado @relation(fields: [idEmpleado], references: [id], onUpdate: NoAction)
+  licencia   Licencia @relation(fields: [idLicencia], references: [id], onUpdate: NoAction)
 }
 
 model DisponibilidadViaje {
-  id          Int        @id @default(autoincrement())
-  nombre      String
-  empleados   Empleado[]
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  empleados Empleado[]
+}
+
+model EstadoEmpleado {
+  id       Int        @id(map: "PK_EstadoEmpleado") @default(autoincrement())
+  nombre   String
+  Empleado Empleado[]
+}
+
+model sysdiagrams {
+  name         String @db.NVarChar(128)
+  principal_id Int
+  diagram_id   Int    @id(map: "PK__sysdiagr__C2B05B6134E1CED3") @default(autoincrement())
+  version      Int?
+  definition   Bytes?
+
+  @@unique([principal_id, name], map: "UK_principal_name")
 }

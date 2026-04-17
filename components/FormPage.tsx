@@ -42,6 +42,7 @@ export default function FormPage({ formType }: { formType: 'empleado' | 'postula
     defaultValues: {
       nombre: '',
       dni: '',
+      fechaNacimiento: '',
       telefono: '',
       email: '',
       pais: '',

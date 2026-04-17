@@ -19,6 +19,7 @@ export type LegajoFormData = {
   //step1
   nombre: string;
   dni: string;
+  fechaNacimiento: string;
   telefono: string;
   email: string;
   pais: number | '';
@@ -48,6 +49,7 @@ export type LegajoFormData = {
 export type FormPayload = {
   nombre: string;
   dni: string;
+  fechaNacimiento: string;
   telefono: string;
   email: string;
   pais: number;

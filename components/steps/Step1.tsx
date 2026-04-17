@@ -10,6 +10,7 @@ import { getAreas } from "@/actions/area/area.actions";
 import StepWrapper from "@/components/common/StepWrapper";
 import FormField from "@/components/common/FormField";
 import FormSelect from "@/components/common/FormSelect";
+import FormDatePicker from "../common/FormDatePicker";
 
 export default function Step1({
   onNext,
@@ -64,6 +65,7 @@ export default function Step1({
       {/* datos personales */}
       <FormField name='nombre' control={form.control} label='Nombre Completo *' rules={{ required: 'Debe ingresar su nombre completo' }} />
       <FormField name='dni' control={form.control} label='Nº de Documento / ID *' rules={{ required: 'Debe ingresar su número de documento' }} />
+      <FormDatePicker name='fechaNacimiento' control={form.control} label='Fecha de Nacimiento *' rules={{ required: 'Debe ingresar una fecha de nacimiento' }} />
       <FormField name='telefono' control={form.control} label='Teléfono (Con Código de País) *' rules={{ required: 'Debe ingresar su número de teléfono', pattern: { value: /^\+[1-9]\d{6,14}$/, message: 'Ingrese el teléfono con código de país (ej: +5491112345678)' } }} />
       <FormField name='email' control={form.control} label='Email *' type='email' rules={{ required: 'Debe ingresar su correo electrónico', pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: 'Ingrese un correo electrónico válido' } }} />
       {/* ubicacion */}
