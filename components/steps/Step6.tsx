@@ -3,7 +3,7 @@ import StepWrapper from "@/components/common/StepWrapper";
 import { submitLegajo } from "@/actions/legajo/legajo.actions";
 import { useFormContext, useWatch } from "react-hook-form";
 import { LegajoFormData } from "@/lib/types/legajo";
-import { MAX_CV_SIZE } from "@/lib/constants";
+import { MAX_CV_SIZE, MAX_CV_TOTAL_SIZE } from "@/lib/constants";
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getDisponibilidades } from "@/actions/disponibilidad/disponibilidad.actions";
@@ -46,10 +46,13 @@ export default function Step6({
     if (!newFiles) return;
     const current = form.getValues('archivos');
     const toAdd: File[] = [];
+    let runningTotal = current.reduce((sum, f) => sum + f.size, 0);
     for (const file of Array.from(newFiles)) {
       if (file.type !== 'application/pdf') { showWarning(`"${file.name}" no es un PDF`); continue; }
       if (file.size > MAX_CV_SIZE) { showWarning(`"${file.name}" supera los 5 MB`); continue; }
       if (current.some(f => f.name === file.name && f.size === file.size)) { showWarning(`"${file.name}" ya fue adjuntado`); continue; }
+      if (runningTotal + file.size > MAX_CV_TOTAL_SIZE) { showWarning(`"${file.name}" excede el total permitido de ${MAX_CV_TOTAL_SIZE / 1024 / 1024} MB`); continue; }
+      runningTotal += file.size;
       toAdd.push(file);
     }
     if (toAdd.length) form.setValue('archivos', [...current, ...toAdd], { shouldValidate: true });
@@ -220,7 +223,7 @@ export default function Step6({
         <span className='text-sm text-gray-500'>
           {archivos.length ? 'Agregar otro archivo' : 'Tocá para adjuntar'}
         </span>
-        <span className='text-xs text-orange-500'>Solo archivos PDF · Máx. 5 MB por archivo</span>
+        <span className='text-xs text-orange-500'>Solo archivos PDF · Máx. 5 MB por archivo · Total máx. {MAX_CV_TOTAL_SIZE / 1024 / 1024} MB</span>
         <input
           ref={fileInputRef}
           type='file'

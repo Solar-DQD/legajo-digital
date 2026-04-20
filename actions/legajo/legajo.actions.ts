@@ -3,7 +3,7 @@
 import { prisma } from '@/lib/prisma'
 import type { Prisma } from '@prisma/client'
 import type { FormPayload } from '@/lib/types/legajo'
-import { MAX_CV_SIZE } from '@/lib/constants'
+import { MAX_CV_SIZE, MAX_CV_TOTAL_SIZE } from '@/lib/constants'
 import { parseMonthYear } from '@/lib/utils/parseMonthYear'
 import { verifyTurnstile } from '@/actions/turnstile/turnstile.actions'
 import { getGraphToken, uploadFilesToSharePoint } from '@/actions/graphApi/graphApi.actions'
@@ -26,10 +26,13 @@ export async function submitLegajo(formData: FormData, isPostulante: boolean): P
 
     // Validación server-side de archivos
     if (!archivos.length || archivos[0].size === 0) return { error: 'CV requerido' }
+    let totalSize = 0
     for (const archivo of archivos) {
       if (archivo.type !== 'application/pdf') return { error: `"${archivo.name}" debe ser un archivo PDF` }
       if (archivo.size > MAX_CV_SIZE) return { error: `"${archivo.name}" no puede superar los 5 MB` }
+      totalSize += archivo.size
     }
+    if (totalSize > MAX_CV_TOTAL_SIZE) return { error: `El tamaño total de los archivos no puede superar los ${MAX_CV_TOTAL_SIZE / 1024 / 1024} MB` }
 
     // Subir archivos a SharePoint (fuera de la transacción de DB)
     const token = await getGraphToken();
