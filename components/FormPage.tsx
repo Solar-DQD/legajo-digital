@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useState } from 'react';
 import FormStepper from '@/components/common/FormStepper';
 import Step1 from '@/components/steps/Step1';
 import Step2 from '@/components/steps/Step2';
@@ -10,29 +10,10 @@ import Step5 from '@/components/steps/Step5';
 import Step6 from '@/components/steps/Step6';
 import { FormProvider, useForm } from 'react-hook-form';
 import { LegajoFormData } from '@/lib/types/legajo';
-import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 
 export default function FormPage({ formType }: { formType: 'empleado' | 'postulante' }) {
-  const [turnstileToken, setTurnstileToken] = useState<string>('');
   const [activeStep, setActiveStep] = useState(0);
   const [submittedName, setSubmittedName] = useState<string | null>(null);
-  const turnstileRef = useRef<TurnstileInstance>(null);
-  const tokenResolverRef = useRef<((token: string) => void) | null>(null);
-
-  const handleTurnstileSuccess = useCallback((token: string) => {
-    setTurnstileToken(token);
-    if (tokenResolverRef.current) {
-      tokenResolverRef.current(token);
-      tokenResolverRef.current = null;
-    }
-  }, []);
-
-  const refreshTurnstileToken = useCallback((): Promise<string> => {
-    return new Promise((resolve) => {
-      tokenResolverRef.current = resolve;
-      turnstileRef.current?.reset();
-    });
-  }, []);
 
   const next = () => setActiveStep((s) => s + 1);
   const back = () => setActiveStep((s) => s - 1);
@@ -83,21 +64,6 @@ export default function FormPage({ formType }: { formType: 'empleado' | 'postula
     );
   }
 
-  if (!turnstileToken) {
-    return (
-      <div className='flex flex-col flex-1 items-center justify-center gap-4 px-4'>
-        <p className='text-sm text-gray-500'>Verificando que sos humano...</p>
-        <Turnstile
-          ref={turnstileRef}
-          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-          onSuccess={handleTurnstileSuccess}
-          onExpire={() => setTurnstileToken('')}
-          onError={() => setTurnstileToken('')}
-        />
-      </div>
-    );
-  }
-
   return (
     <>
       <div className='flex w-full h-1'>
@@ -125,21 +91,11 @@ export default function FormPage({ formType }: { formType: 'empleado' | 'postula
               <Step6
                 onBack={back}
                 onSuccess={(nombre) => setSubmittedName(nombre)}
-                refreshTurnstileToken={refreshTurnstileToken}
                 isPostulante={formType === 'postulante'}
               />
             )}
           </FormProvider>
         </div>
-      </div>
-      <div style={{ position: 'absolute', left: '-9999px' }}>
-        <Turnstile
-          ref={turnstileRef}
-          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
-          onSuccess={handleTurnstileSuccess}
-          onExpire={() => setTurnstileToken('')}
-          onError={() => setTurnstileToken('')}
-        />
       </div>
     </>
   );

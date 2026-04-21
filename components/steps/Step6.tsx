@@ -23,12 +23,10 @@ const disponibilidadEmoji: Record<string, React.ReactNode> = {
 export default function Step6({
   onBack,
   onSuccess,
-  refreshTurnstileToken,
   isPostulante
 }: {
   onBack: () => void;
   onSuccess: (nombre: string) => void;
-  refreshTurnstileToken: () => Promise<string>;
   isPostulante: boolean;
 }) {
   // hooks
@@ -73,16 +71,12 @@ export default function Step6({
     submittingRef.current = true;
     setIsSubmitting(true);
     try {
-      // Refresca el token de Turnstile para que no esté vencido
-      const freshToken = await refreshTurnstileToken();
       // Obtiene todos los valores del formulario (todos los steps)
       const values = form.getValues();
       // Arma el FormData para enviar al server action
       const fd = new FormData();
       // Adjunta cada archivo PDF
       for (const archivo of values.archivos) fd.append('archivos', archivo);
-      // Adjunta el token fresco de Turnstile para verificación server-side
-      fd.append('turnstileToken', freshToken);
       // Separa los archivos del resto de los datos
       const { archivos: _archivos, ...rest } = values;
       // Adjunta el resto de los datos como JSON

@@ -5,7 +5,6 @@ import type { Prisma } from '@prisma/client'
 import type { FormPayload } from '@/lib/types/legajo'
 import { MAX_CV_SIZE, MAX_CV_TOTAL_SIZE } from '@/lib/constants'
 import { parseMonthYear } from '@/lib/utils/parseMonthYear'
-import { verifyTurnstile } from '@/actions/turnstile/turnstile.actions'
 import { getGraphToken, uploadFilesToSharePoint } from '@/actions/graphApi/graphApi.actions'
 import { getEstadosEmpleado } from '../estadoEmpleado/estadoEmpleado.actions'
 import dayjs from 'dayjs'
@@ -16,13 +15,7 @@ dayjs.extend(customParseFormat)
 export async function submitLegajo(formData: FormData, isPostulante: boolean): Promise<{ error?: string }> {
   try {
     const archivos = formData.getAll('archivos') as File[]
-    const turnstileToken = formData.get('turnstileToken') as string
     const data = JSON.parse(formData.get('data') as string) as FormPayload
-
-    // Verificar Turnstile
-    if (!turnstileToken || !(await verifyTurnstile(turnstileToken))) {
-      return { error: 'Verificación de seguridad fallida. Por favor recargá la página e intentá de nuevo.' }
-    }
 
     // Validación server-side de archivos
     if (!archivos.length || archivos[0].size === 0) return { error: 'CV requerido' }
