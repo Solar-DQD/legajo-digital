@@ -525,6 +525,23 @@ async function main() {
         ],
     })
 
+    // ─── PUESTO ──────────────────────────────────────────────────────────────────
+    await prisma.puesto.deleteMany()
+    await prisma.puesto.createMany({
+        data: [
+            { nombre: 'Herrero/Soldador' },
+            { nombre: 'Carpintero' },
+            { nombre: 'Maquinista' },
+            { nombre: 'Mecánico' },
+            { nombre: 'Topógrafo' },
+            { nombre: 'Pañolero' },
+            { nombre: 'Ayudante de obra' },
+            { nombre: 'Casco verde' },
+            { nombre: 'Electrico' },
+            { nombre: 'Chofer (camión/sprinter)' },
+        ],
+    })
+
     // ─── HERRAMIENTAS ────────────────────────────────────────────────────────────
     await prisma.herramienta.deleteMany()
     await prisma.herramienta.createMany({

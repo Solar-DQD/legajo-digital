@@ -79,15 +79,17 @@ model Empleado {
   idTipoConvenio        Int?
   idArea                Int?
   puesto                String?
+  idPuesto              Int?
   idDisponibilidadViaje Int
   createdAt             DateTime                @default(now())
   fechaNacimiento       DateTime?               @db.Date
-  idEstadoEmpleado      Int?                    @relation(fields: [idEstadoEmpleado], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  idEstadoEmpleado      Int?
   area                  Area?                   @relation(fields: [idArea], references: [id], onDelete: NoAction, onUpdate: NoAction)
   disponibilidad        DisponibilidadViaje     @relation(fields: [idDisponibilidadViaje], references: [id], onUpdate: NoAction)
   pais                  Pais                    @relation(fields: [idPais], references: [id], onUpdate: NoAction)
   provincia             Provincia               @relation(fields: [idProvincia], references: [id], onUpdate: NoAction)
   tipoConvenio          TipoConvenio?           @relation(fields: [idTipoConvenio], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  puestoRef             Puesto?                 @relation(fields: [idPuesto], references: [id], onDelete: NoAction, onUpdate: NoAction)
   EstadoEmpleado        EstadoEmpleado?         @relation(fields: [idEstadoEmpleado], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_Empleado_EstadoEmpleado")
   certificaciones       EmpleadoCertificacion[]
   educacion             EmpleadoEducacion[]
@@ -164,6 +166,12 @@ model EmpleadoLicencia {
 }
 
 model DisponibilidadViaje {
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  empleados Empleado[]
+}
+
+model Puesto {
   id        Int        @id @default(autoincrement())
   nombre    String
   empleados Empleado[]
