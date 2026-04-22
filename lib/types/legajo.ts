@@ -27,6 +27,7 @@ export type LegajoFormData = {
   convenio: number | '';
   area: number | '';
   puesto: string;
+  puestoId: number | '';
   //step2
   habilidades: number[];
   habilidadesPersonalizadas: string[];
@@ -57,6 +58,7 @@ export type FormPayload = {
   convenio: number;
   area: number | '';
   puesto: string;
+  puestoId: number | '';
   habilidades: number[];
   habilidadesPersonalizadas: string[];
   herramientas: number[];

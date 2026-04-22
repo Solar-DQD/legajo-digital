@@ -50,6 +50,7 @@ export default function FormPage({ formType }: { formType: 'empleado' | 'postula
       convenio: '',
       area: '',
       puesto: '',
+      puestoId: '',
       habilidades: [],
       habilidadesPersonalizadas: [],
       herramientas: [],

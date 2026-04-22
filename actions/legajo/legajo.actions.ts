@@ -69,6 +69,7 @@ export async function submitLegajo(formData: FormData, isPostulante: boolean): P
           idDisponibilidadViaje: data.disponibilidad,
           idArea: data.area === '' ? null : data.area,
           puesto: data.puesto || null,
+          idPuesto: data.puestoId === '' ? null : data.puestoId,
           idEstadoEmpleado: isPostulante ? estados['Postulante'] : estados['Empleado Activo'],
         },
       })

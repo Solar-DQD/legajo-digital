@@ -11,6 +11,7 @@ import StepWrapper from "@/components/common/StepWrapper";
 import FormField from "@/components/common/FormField";
 import FormSelect from "@/components/common/FormSelect";
 import FormDatePicker from "../common/FormDatePicker";
+import { getPuestos } from "@/actions/puesto/puesto.actions";
 
 export default function Step1({
   onNext,
@@ -45,6 +46,11 @@ export default function Step1({
     enabled: !tiposConvenio.isLoading && form.watch('convenio') === tiposConvenio.data?.fueraConvenio?.id,
     refetchOnWindowFocus: false
   });
+  const puestos = useQuery({
+    queryKey: ['getPuestos'],
+    queryFn: () => getPuestos(),
+    refetchOnWindowFocus: false
+  });
   //feedback
   useEffect(() => {
     if (paises.isError) showWarning('Error cargando países');
@@ -58,6 +64,8 @@ export default function Step1({
     if (convenio !== tiposConvenio.data.fueraConvenio?.id) {
       form.setValue('area', '');
       form.setValue('puesto', '');
+    } else {
+      form.setValue('puestoId', '');
     }
   }, [convenio, tiposConvenio.data, form]);
   return (
@@ -72,13 +80,20 @@ export default function Step1({
       <FormSelect name='pais' control={form.control} label='País de Residencia *' rules={{ required: 'Debe seleccionar su país' }} options={paises.data ?? []} isLoading={paises.isLoading} />
       <FormSelect name='provincia' control={form.control} label='Provincia / Estado / Región *' rules={{ required: 'Debe seleccionar su provincia' }} options={provincias.data ?? []} disabled={form.watch('pais') === ''} isLoading={provincias.isLoading} />
       {/* convenio - solo empleados */}
-      {!isPostulante && <>
-        <FormSelect name='convenio' control={form.control} label='Modalidad de Contratación *' rules={{ required: 'Debe seleccionar un convenio' }} options={tiposConvenio.data?.convenios ?? []} isLoading={tiposConvenio.isLoading} />
-        {!tiposConvenio.isLoading && form.watch('convenio') === tiposConvenio.data?.fueraConvenio?.id && <>
-          <FormSelect name='area' control={form.control} label='Área / Sector *' rules={{ required: 'Debe seleccionar su área de trabajo' }} options={areas.data ?? []} isLoading={areas.isLoading} />
-          <FormField name='puesto' control={form.control} label='Puesto Actual *' rules={{ required: 'Debe ingresar su puesto actual' }} />
-        </>}
-      </>}
+      {!isPostulante &&
+        <>
+          <FormSelect name='convenio' control={form.control} label='Modalidad de Contratación *' rules={{ required: 'Debe seleccionar un convenio' }} options={tiposConvenio.data?.convenios ?? []} isLoading={tiposConvenio.isLoading} />
+          {!tiposConvenio.isLoading && form.watch('convenio') === tiposConvenio.data?.fueraConvenio?.id &&
+            <>
+              <FormSelect name='area' control={form.control} label='Área / Sector *' rules={{ required: 'Debe seleccionar su área de trabajo' }} options={areas.data ?? []} isLoading={areas.isLoading} />
+              <FormField name='puesto' control={form.control} label='Puesto Actual *' rules={{ required: 'Debe ingresar su puesto actual' }} />
+            </>
+          }
+          {!tiposConvenio.isLoading && form.watch('convenio') != tiposConvenio.data?.fueraConvenio?.id &&
+            <FormSelect name='puestoId' control={form.control} label='Puesto Actual *' rules={{ required: 'Debe seleccionar su puesto de trabajo' }} options={puestos.data ?? []} isLoading={puestos.isLoading}/>
+          }
+        </>
+      }
     </StepWrapper>
   );
 }
