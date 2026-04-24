@@ -146,7 +146,6 @@ export default function Step6({
       isSubmitting={isSubmitting}
       title='Disponibilidad'
       subtitle='Para asignacion a proyectos en otras provincias'
-      isValid={form.formState.isValid}
       trigger={form.trigger}
       fieldNames={step6Fields}
     >

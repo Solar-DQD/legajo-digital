@@ -92,7 +92,6 @@ export default function Step1({
       isFirst
       title='Datos Personales'
       subtitle='Información Básica de Contacto'
-      isValid={form.formState.isValid}
       trigger={form.trigger}
       fieldNames={stepFields}
     >

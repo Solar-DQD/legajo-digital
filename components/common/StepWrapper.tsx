@@ -3,7 +3,6 @@ import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
 import SyncIcon from '@mui/icons-material/Sync';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
-import { useEffect, useState } from "react";
 import { UseFormTrigger } from "react-hook-form";
 
 export default function StepWrapper({
@@ -33,9 +32,6 @@ export default function StepWrapper({
     fieldNames?: string[],
     children?: React.ReactNode
 }) {
-    const [mounted, setMounted] = useState(false);
-    useEffect(() => setMounted(true), []);
-
     const handleNext = async () => {
         if (trigger && fieldNames) {
             const isStepValid = await trigger(fieldNames);
@@ -85,7 +81,7 @@ export default function StepWrapper({
                         color='warning'
                         fullWidth
                         disableElevation
-                        disabled={mounted ? !isValid : false}
+                        disabled={!isValid}
                         endIcon={<EastRoundedIcon />}
                         onClick={handleNext}
                     >
@@ -98,7 +94,7 @@ export default function StepWrapper({
                         color='success'
                         fullWidth
                         disableElevation
-                        disabled={isSubmitting || (mounted ? !isValid : false)}
+                        disabled={isSubmitting || !isValid}
                         startIcon={isSubmitting ? (
                             <SyncIcon className='animate-spin' style={{ animationDirection: 'reverse' }} />
                         ) : <CheckRoundedIcon />}

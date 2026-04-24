@@ -85,7 +85,6 @@ export default function Step5({
       onBack={onBack}
       title='Formación y Certificaciones'
       subtitle='Títulos, cursos y habilitaciones'
-      isValid={form.formState.isValid}
       trigger={form.trigger}
       fieldNames={educacionFields}
     >

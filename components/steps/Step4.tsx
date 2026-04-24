@@ -36,7 +36,6 @@ export default function Step4({
       onBack={onBack}
       title='Experiencia Laboral'
       subtitle='Tus trabajos anteriores'
-      isValid={form.formState.isValid}
       trigger={form.trigger}
       fieldNames={experienciaFields}
     >

@@ -22,9 +22,7 @@ export async function submitLegajo(formData: FormData, isPostulante: boolean): P
     const turnstileToken = formData.get('turnstileToken') as string
 
     // Verificar Turnstile
-    console.time(`${tag} verifyTurnstile`)
     const turnstileOk = turnstileToken && (await verifyTurnstile(turnstileToken))
-    console.timeEnd(`${tag} verifyTurnstile`)
     if (!turnstileOk) {
       return { error: 'Verificación de seguridad fallida. Por favor recargá la página e intentá de nuevo.' }
     }
@@ -38,7 +36,6 @@ export async function submitLegajo(formData: FormData, isPostulante: boolean): P
       totalSize += archivo.size
     }
     if (totalSize > MAX_CV_TOTAL_SIZE) return { error: `El tamaño total de los archivos no puede superar los ${MAX_CV_TOTAL_SIZE / 1024 / 1024} MB` }
-    console.log(`${tag} ${archivos.length} archivo(s), ${(totalSize / 1024).toFixed(1)} KB total`)
 
     // Validar fecha de nacimiento
     if (!data.fechaNacimiento) return { error: 'La fecha de nacimiento es requerida' }
@@ -46,20 +43,11 @@ export async function submitLegajo(formData: FormData, isPostulante: boolean): P
     if (!fechaNac.isValid()) return { error: 'La fecha de nacimiento tiene un formato inválido' }
 
     // Subir archivos a SharePoint (fuera de la transacción de DB)
-    console.time(`${tag} getGraphToken`)
     const token = await getGraphToken();
-    console.timeEnd(`${tag} getGraphToken`)
-
-    console.time(`${tag} uploadFilesToSharePoint`)
     const urlCv = await uploadFilesToSharePoint(archivos, token, isPostulante, data.pais, data.provincia, data.dni);
-    console.timeEnd(`${tag} uploadFilesToSharePoint`)
-
-    console.time(`${tag} getEstadosEmpleado`)
     const estados = await getEstadosEmpleado();
-    console.timeEnd(`${tag} getEstadosEmpleado`)
 
     // Todo lo de DB dentro de una transacción
-    console.time(`${tag} db transaction`)
     await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Crear habilidades y herramientas personalizadas
       const customHabilidades = await Promise.all(
@@ -146,7 +134,6 @@ export async function submitLegajo(formData: FormData, isPostulante: boolean): P
         ),
       ])
     })
-    console.timeEnd(`${tag} db transaction`)
 
     return {}
   } catch (error) {
