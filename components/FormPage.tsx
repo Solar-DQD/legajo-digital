@@ -38,7 +38,7 @@ export default function FormPage({ formType }: { formType: 'empleado' | 'postula
   const back = () => setActiveStep((s) => s - 1);
 
   const form = useForm<LegajoFormData>({
-    mode: 'onTouched',
+    mode: 'onBlur',
     defaultValues: {
       nombre: '',
       dni: '',

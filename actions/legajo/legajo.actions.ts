@@ -40,6 +40,11 @@ export async function submitLegajo(formData: FormData, isPostulante: boolean): P
     if (totalSize > MAX_CV_TOTAL_SIZE) return { error: `El tamaño total de los archivos no puede superar los ${MAX_CV_TOTAL_SIZE / 1024 / 1024} MB` }
     console.log(`${tag} ${archivos.length} archivo(s), ${(totalSize / 1024).toFixed(1)} KB total`)
 
+    // Validar fecha de nacimiento
+    if (!data.fechaNacimiento) return { error: 'La fecha de nacimiento es requerida' }
+    const fechaNac = dayjs(data.fechaNacimiento, 'DD-MM-YYYY')
+    if (!fechaNac.isValid()) return { error: 'La fecha de nacimiento tiene un formato inválido' }
+
     // Subir archivos a SharePoint (fuera de la transacción de DB)
     console.time(`${tag} getGraphToken`)
     const token = await getGraphToken();
