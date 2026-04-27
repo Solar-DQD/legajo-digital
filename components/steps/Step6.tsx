@@ -135,8 +135,20 @@ export default function Step6({
     if (disponibilidades.isError) showWarning('Error cargando disponibilidades de viaje');
   }, [showWarning, idiomasQuery.isError, disponibilidades.isError])
   const seleccionadas = idiomasQuery.data?.filter(i => idiomas.includes(i.id)) ?? [];
+  // Validar disponibilidad (archivos se valida manualmente en handleSubmit)
+  const step6Fields = ['disponibilidad'];
+
   return (
-    <StepWrapper onBack={onBack} isLast onSubmit={handleSubmit} isSubmitting={isSubmitting} title='Disponibilidad' subtitle='Para asignacion a proyectos en otras provincias' isValid={form.formState.isValid}>
+    <StepWrapper
+      onBack={onBack}
+      isLast
+      onSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      title='Disponibilidad'
+      subtitle='Para asignacion a proyectos en otras provincias'
+      trigger={form.trigger}
+      fieldNames={step6Fields}
+    >
       <div className='text-sm text-gray-700 leading-tight'>
         Disponibilidad Para Viajar
       </div>

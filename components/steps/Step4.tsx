@@ -19,8 +19,26 @@ export default function Step4({
     control: form.control,
     name: 'experiencias'
   });
+  // Validar campos del array de experiencias
+  const experienciaFields = array.fields.length > 0
+    ? array.fields.flatMap((_, index) => [
+        `experiencias.${index}.empresa`,
+        `experiencias.${index}.puesto`,
+        `experiencias.${index}.sector`,
+        `experiencias.${index}.desde`,
+        `experiencias.${index}.descripcion`
+      ])
+    : [];
+
   return (
-    <StepWrapper onNext={onNext} onBack={onBack} title='Experiencia Laboral' subtitle='Tus trabajos anteriores' isValid={form.formState.isValid}>
+    <StepWrapper
+      onNext={onNext}
+      onBack={onBack}
+      title='Experiencia Laboral'
+      subtitle='Tus trabajos anteriores'
+      trigger={form.trigger}
+      fieldNames={experienciaFields}
+    >
       <div className='flex flex-col w-full gap-2 overflow-auto'>
         {array.fields.map((field, index) => (
           <div key={field.id} className='flex flex-col gap-4 border border-orange-500 p-4 rounded'>

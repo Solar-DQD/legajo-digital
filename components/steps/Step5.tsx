@@ -70,8 +70,24 @@ export default function Step5({
   useEffect(() => {
     if (niveles.isError) showWarning('Error cargando niveles educativos');
   }, [showWarning, niveles.isError]);
+  // Validar campos del array de educaciones
+  const educacionFields = array.fields.length > 0
+    ? array.fields.flatMap((_, index) => [
+        `educaciones.${index}.nivel`,
+        `educaciones.${index}.titulo`,
+        `educaciones.${index}.institucion`
+      ])
+    : [];
+
   return (
-    <StepWrapper onNext={onNext} onBack={onBack} title='Formación y Certificaciones' subtitle='Títulos, cursos y habilitaciones' isValid={form.formState.isValid}>
+    <StepWrapper
+      onNext={onNext}
+      onBack={onBack}
+      title='Formación y Certificaciones'
+      subtitle='Títulos, cursos y habilitaciones'
+      trigger={form.trigger}
+      fieldNames={educacionFields}
+    >
       <div className='flex flex-col w-full gap-2 overflow-auto'>
         {array.fields.map((field, index) => (
           <div key={field.id} className='flex flex-col gap-4 border border-orange-500 p-4 rounded'>

@@ -68,8 +68,33 @@ export default function Step1({
       form.setValue('puestoId', '');
     }
   }, [convenio, tiposConvenio.data, form]);
+
+  // Campos base para ambos (empleados y postulantes)
+  const baseFields = ['nombre', 'dni', 'fechaNacimiento', 'telefono', 'email', 'pais', 'provincia'];
+
+  // Campos adicionales para empleados
+  const empleadoFields = ['convenio'];
+  const fueraConvenioFields = ['area', 'puesto'];
+  const dentroConvenioFields = ['puestoId'];
+
+  // Construir array de campos según el tipo
+  const stepFields = isPostulante
+    ? baseFields
+    : [
+        ...baseFields,
+        ...empleadoFields,
+        ...(convenio === tiposConvenio.data?.fueraConvenio?.id ? fueraConvenioFields : dentroConvenioFields)
+      ].filter(Boolean);
+
   return (
-    <StepWrapper onNext={onNext} isFirst title='Datos Personales' subtitle='Información Básica de Contacto' isValid={form.formState.isValid}>
+    <StepWrapper
+      onNext={onNext}
+      isFirst
+      title='Datos Personales'
+      subtitle='Información Básica de Contacto'
+      trigger={form.trigger}
+      fieldNames={stepFields}
+    >
       {/* datos personales */}
       <FormField name='nombre' control={form.control} label='Nombre Completo *' rules={{ required: 'Debe ingresar su nombre completo' }} />
       <FormField name='dni' control={form.control} label='Nº de Documento / ID *' rules={{ required: 'Debe ingresar su número de documento' }} />

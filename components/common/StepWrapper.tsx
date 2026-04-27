@@ -3,7 +3,7 @@ import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import WestRoundedIcon from '@mui/icons-material/WestRounded';
 import SyncIcon from '@mui/icons-material/Sync';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
-import { useEffect, useState } from "react";
+import { UseFormTrigger } from "react-hook-form";
 
 export default function StepWrapper({
     onNext,
@@ -15,6 +15,8 @@ export default function StepWrapper({
     title,
     subtitle,
     isValid = true,
+    trigger,
+    fieldNames,
     children
 }: {
     onNext?: () => void,
@@ -26,10 +28,25 @@ export default function StepWrapper({
     title: string,
     subtitle: string,
     isValid?: boolean,
+    trigger?: UseFormTrigger<any>,
+    fieldNames?: string[],
     children?: React.ReactNode
 }) {
-    const [mounted, setMounted] = useState(false);
-    useEffect(() => setMounted(true), []);
+    const handleNext = async () => {
+        if (trigger && fieldNames) {
+            const isStepValid = await trigger(fieldNames);
+            if (!isStepValid) return;
+        }
+        onNext?.();
+    };
+
+    const handleSubmit = async () => {
+        if (trigger && fieldNames) {
+            const isStepValid = await trigger(fieldNames);
+            if (!isStepValid) return;
+        }
+        onSubmit?.();
+    };
     return (
         <div className='flex flex-col w-full max-w-[400px] gap-3 sm:gap-4'>
             <div className='flex flex-col w-full gap-3 sm:gap-4'>
@@ -64,9 +81,9 @@ export default function StepWrapper({
                         color='warning'
                         fullWidth
                         disableElevation
-                        disabled={mounted ? !isValid : false}
+                        disabled={!isValid}
                         endIcon={<EastRoundedIcon />}
-                        onClick={onNext}
+                        onClick={handleNext}
                     >
                         Siguiente
                     </Button>
@@ -77,11 +94,11 @@ export default function StepWrapper({
                         color='success'
                         fullWidth
                         disableElevation
-                        disabled={isSubmitting || (mounted ? !isValid : false)}
+                        disabled={isSubmitting || !isValid}
                         startIcon={isSubmitting ? (
                             <SyncIcon className='animate-spin' style={{ animationDirection: 'reverse' }} />
                         ) : <CheckRoundedIcon />}
-                        onClick={onSubmit}
+                        onClick={handleSubmit}
                     >
                         {isSubmitting ? 'Enviando' : 'Enviar legajo'}
                     </Button>

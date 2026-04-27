@@ -14,13 +14,16 @@ import customParseFormat from 'dayjs/plugin/customParseFormat'
 dayjs.extend(customParseFormat)
 
 export async function submitLegajo(formData: FormData, isPostulante: boolean): Promise<{ error?: string }> {
+  const data = JSON.parse(formData.get('data') as string) as FormPayload
+  const tag = `[submitLegajo ${data.dni}]`
+  console.time(`${tag} total`)
   try {
     const archivos = formData.getAll('archivos') as File[]
     const turnstileToken = formData.get('turnstileToken') as string
-    const data = JSON.parse(formData.get('data') as string) as FormPayload
 
     // Verificar Turnstile
-    if (!turnstileToken || !(await verifyTurnstile(turnstileToken))) {
+    const turnstileOk = turnstileToken && (await verifyTurnstile(turnstileToken))
+    if (!turnstileOk) {
       return { error: 'Verificación de seguridad fallida. Por favor recargá la página e intentá de nuevo.' }
     }
 
@@ -34,10 +37,14 @@ export async function submitLegajo(formData: FormData, isPostulante: boolean): P
     }
     if (totalSize > MAX_CV_TOTAL_SIZE) return { error: `El tamaño total de los archivos no puede superar los ${MAX_CV_TOTAL_SIZE / 1024 / 1024} MB` }
 
+    // Validar fecha de nacimiento
+    if (!data.fechaNacimiento) return { error: 'La fecha de nacimiento es requerida' }
+    const fechaNac = dayjs(data.fechaNacimiento, 'DD-MM-YYYY')
+    if (!fechaNac.isValid()) return { error: 'La fecha de nacimiento tiene un formato inválido' }
+
     // Subir archivos a SharePoint (fuera de la transacción de DB)
     const token = await getGraphToken();
     const urlCv = await uploadFilesToSharePoint(archivos, token, isPostulante, data.pais, data.provincia, data.dni);
-
     const estados = await getEstadosEmpleado();
 
     // Todo lo de DB dentro de una transacción
@@ -130,8 +137,10 @@ export async function submitLegajo(formData: FormData, isPostulante: boolean): P
 
     return {}
   } catch (error) {
-    console.error('[submitLegajo]', error)
+    console.error(tag, error)
     return { error: error instanceof Error ? error.message : 'Error al guardar el legajo' }
+  } finally {
+    console.timeEnd(`${tag} total`)
   }
 }
 
